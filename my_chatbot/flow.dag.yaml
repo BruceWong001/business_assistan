@@ -15,26 +15,32 @@ inputs:
     type: list
     is_chat_input: false
     default:
-    - doc1: 紫禁城,位于中国北京，始建于明朝永乐四年（1406年），是明清两代的皇宫，延续使用了近五百年，至今已有超过600年的历史。这座宏伟的宫殿是中国古代宫廷建筑之精华，占地约720,000平方米，有宫墙围绕，内有多达9999间房屋。
-    - doc2: 紫禁城不仅是中国的政治中心，也是文化和礼仪的重心，其建筑和布局反映了中国的传统哲学和宇宙观。1961年，紫禁城被列为中国国家级文物保护单位，并于1987年被联合国教科文组织评定为世界文化遗产。现今，它作为故宫博物院，对公众开放，每年吸引着成千上万的游客和历史爱好者。
-    - doc3: 紫禁城指的就是故宫，天安门为北京故宫城门。相关介绍1.北京故宫：是中国明清两代的皇家宫殿，旧称紫禁城，位于北京中轴线的中心，是中国古代宫廷建筑之精华。2.天安门：天安门是明清两代北京皇城的正门，始建于明朝永乐十五年（1417年），最初名“承天门”，寓“承天启运、受命于天”之意。设计者为明代御用建筑匠师蒯祥。清朝顺治八年（1651年）更名为天安门。
+    - 紫禁城,位于中国北京，始建于明朝永乐四年（1406年），是明清两代的皇宫，延续使用了近五百年，至今已有超过600年的历史。这座宏伟的宫殿是中国古代宫廷建筑之精华，占地约720,000平方米，有宫墙围绕，内有多达9999间房屋。
+    - 紫禁城不仅是中国的政治中心，也是文化和礼仪的重心，其建筑和布局反映了中国的传统哲学和宇宙观。1961年，紫禁城被列为中国国家级文物保护单位，并于1987年被联合国教科文组织评定为世界文化遗产。现今，它作为故宫博物院，对公众开放，每年吸引着成千上万的游客和历史爱好者。
+    - 紫禁城指的就是故宫，天安门为北京故宫城门。相关介绍1.北京故宫：是中国明清两代的皇家宫殿，旧称紫禁城，位于北京中轴线的中心，是中国古代宫廷建筑之精华。2.天安门：天安门是明清两代北京皇城的正门，始建于明朝永乐十五年（1417年），最初名“承天门”，寓“承天启运、受命于天”之意。设计者为明代御用建筑匠师蒯祥。清朝顺治八年（1651年）更名为天安门。
 outputs:
   answer:
     type: string
     reference: ${chat.output}
     is_chat_output: true
 nodes:
+- name: embeddingQuery
+  type: python
+  source:
+    type: code
+    path: embeddingQuery.py
+  inputs:
+    queryStr: ${inputs.question}
 - name: chat
   type: llm
   source:
     type: code
     path: chat.jinja2
   inputs:
-    deployment_name: gpt-4-32k
-    max_tokens: 256
+    deployment_name: gpt-35-turbo-16k
     temperature: 0.7
     chat_history: ${inputs.chat_history}
     question: ${inputs.question}
-    context: ${inputs.context}
-  connection: azure_oai_gpt4
+    context: ${embeddingQuery.output}
+  connection: azure_oai_gpt35
   api: chat
