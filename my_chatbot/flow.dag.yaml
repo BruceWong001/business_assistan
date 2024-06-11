@@ -10,7 +10,7 @@ inputs:
   question:
     type: string
     is_chat_input: true
-    default: 什么是紫禁城
+    default: azure ai studio
   context:
     type: list
     is_chat_input: false
@@ -31,6 +31,7 @@ nodes:
     path: embeddingQuery.py
   inputs:
     queryStr: ${inputs.question}
+    similarity: L2
 - name: chat
   type: llm
   source:
@@ -38,7 +39,7 @@ nodes:
     path: chat.jinja2
   inputs:
     deployment_name: gpt-35-turbo-16k
-    temperature: 0.7
+    temperature: 0
     chat_history: ${inputs.chat_history}
     question: ${inputs.question}
     context: ${embeddingQuery.output}
